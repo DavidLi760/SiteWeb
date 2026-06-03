@@ -1,8 +1,14 @@
 export default function Home() {
   return (
     <main>
-      <h1>Mon restaurant</h1>
-      <p>Commande en ligne</p>
+      <div id="navbar">
+        <img src="/SushiHouse.png"/>
+        <p>Accueil</p>
+        <p>Menu</p>
+        <p>Commander</p>
+        <p>Connexion</p>
+        <p>Panier</p>
+      </div>
     </main>
   );
 }

@@ -23,4 +23,18 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  background-color: #F8F8F8;
+}
+
+#navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #716969;
+  text-align: center;
+  height: 100px;
+}
+
+#navbar img {
+  height: 100%;
 }
