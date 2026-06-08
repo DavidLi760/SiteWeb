@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
 
 :root {
   --background: #ffffff;
@@ -31,10 +32,49 @@ body {
   flex-direction: row;
   justify-content: space-between;
   background-color: #716969;
-  text-align: center;
+  align-items: center;
   height: 100px;
+  padding: 15px;
+}
+
+#navbar-btn {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+}
+
+#navbar-link {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  gap: 3rem;
+}
+
+#navbar-link i {
+  font-size: 2.5rem;
 }
 
 #navbar img {
   height: 100%;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  background: #e63946; /* rouge */
+  color: white;
+
+  font-size: 0.65rem;
+  font-weight: bold;
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
