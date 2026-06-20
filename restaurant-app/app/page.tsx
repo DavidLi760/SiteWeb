@@ -18,7 +18,7 @@ export default function Home() {
         </button>
       </div>
       {menu.map((cat) => (
-        <Category key={cat.category} title={cat.category}>
+        <Category key={cat.category} title={cat.category} id={cat.category}>
           {cat.items.map((food) => (
             <FoodCard
               key={food.id}
