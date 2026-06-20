@@ -1,3 +1,5 @@
+import Menu from "./Menu"
+
 export default function Navbar() {
   return (
     <div className="flex justify-between items-center h-[100px] px-4 bg-[#716969]">
@@ -6,7 +8,7 @@ export default function Navbar() {
 
       <div className="flex gap-12">
         <p>Accueil</p>
-        <p>Menu</p>
+        <Menu />
         <p>A propos</p>
       </div>
 
