@@ -50,5 +50,16 @@ export const menu = [
             image: "/Maki-saumon.png",
         },
     ],
+  },
+  {
+    category: "California",
+    items: [
+      {
+        id:1,
+        name: "California saumon avocat",
+        price: 5.5,
+        image: "/Cali-saumon.png"
+      },
+    ],
   }
 ];

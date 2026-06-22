@@ -2,14 +2,14 @@ import Menu from "./Menu"
 
 export default function Navbar() {
   return (
-    <div className="flex justify-between items-center h-[100px] px-4 bg-[#716969]">
+    <div className="flex flex-row justify-between items-center sm:h-[100px] h-[60px] px-4 bg-[#716969]">
       
       <img src="/SushiHouse.png" className="h-full" />
 
       <div className="flex gap-12">
-        <p>Accueil</p>
+        <p className="hidden">Accueil</p>
         <Menu />
-        <p>A propos</p>
+        <p className="hidden">A propos</p>
       </div>
 
       <div className="flex gap-12 relative">
