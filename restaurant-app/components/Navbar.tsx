@@ -7,9 +7,9 @@ export default function Navbar() {
       <img src="/SushiHouse.png" className="h-full" />
 
       <div className="flex gap-12">
-        <p className="hidden">Accueil</p>
+        <p className="hidden sm:flex">Accueil</p>
         <Menu />
-        <p className="hidden">A propos</p>
+        <p className="hidden sm:flex ">A propos</p>
       </div>
 
       <div className="flex gap-12 relative">
