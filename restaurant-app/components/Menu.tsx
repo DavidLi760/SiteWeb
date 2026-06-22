@@ -12,7 +12,7 @@ export default function Menu() {
         Menu
       </button>
 
-      {open && (<div className="absolute left-0 top-full hidden w-48 rounded border bg-white shadow-lg group-hover:block">
+      {open && (<div className="absolute left-0 top-full w-48 rounded border bg-white shadow-lg">
         {menu.map((category) => (
           <a
             key={category.category}
