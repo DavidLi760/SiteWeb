@@ -7,7 +7,7 @@ type FoodCardProps = {
 export default function FoodCard({ name, price, image }: FoodCardProps) {
   return (
     <div className="p-4 bg-white shadow rounded w-40 sm:w-60">
-        <img src={image} className="w-full h-30 object-cover rounded"/>
+        <img src={image} className="w-full h-30 sm:h-40 object-cover rounded"/>
         <p className="font-bold truncate">{name}</p>
         <p className="text-gray-600">{price} €</p>
     </div>

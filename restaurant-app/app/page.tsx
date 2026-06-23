@@ -1,8 +1,6 @@
-import Navbar from ".././components/Navbar";
-import Footer from ".././components/Footer"
-import Category from ".././components/Category";
-import FoodCard from ".././components/FoodCard";
-import { menu } from ".././data/menu"
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import Shop from "../components/Shop";
 
 export default function Home() {
   return (
@@ -17,18 +15,7 @@ export default function Home() {
           Livraison
         </button>
       </div>
-      {menu.map((cat) => (
-        <Category key={cat.category} title={cat.category} id={cat.category}>
-          {cat.items.map((food) => (
-            <FoodCard
-              key={food.id}
-              name={food.name}
-              price={food.price}
-              image={food.image}
-            />
-          ))}
-        </Category>
-      ))}
+      <Shop />
       <Footer />
     </main>
   );
