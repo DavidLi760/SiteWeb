@@ -3,10 +3,13 @@
 import Link from "next/link"
 import Menu from "./Menu"
 import { usePathname } from "next/navigation";
+import { useState } from "react"
 
 export default function Navbar() {
+  const [cartCount, setCartCount] = useState(0);
   const pathname = usePathname();
   return (
+    
     <div className="flex flex-row justify-between items-center sm:h-[100px] h-[60px] px-4 bg-[#716969]">
       
       <Link href="/" className="flex items-center h-full">
