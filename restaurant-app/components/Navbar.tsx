@@ -19,15 +19,15 @@ export default function Navbar() {
         <Link className="hidden sm:flex text-white" href="/about">A propos</Link>
       </div>
 
-      <div className="flex gap-12 relative">
-        <div className="flex">  
+      <div className="flex gap-12 relative text-white">
+        <Link href="/account" className="flex">  
           <p className="hidden sm:block">
             Compte
           </p>
           <i className="fa-solid fa-user text-2xl"></i>
-        </div>
+        </Link>
 
-        <div className="flex">
+        <Link href="/cart" className="flex text-white">
           <p className="relative hidden sm:block">
             Panier{" "}
           </p>
@@ -35,7 +35,7 @@ export default function Navbar() {
           <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
             0
           </span>
-        </div>
+        </Link>
       </div>
 
     </div>

@@ -8,7 +8,7 @@ export default function Menu() {
 
   return (
     <div className="relative inline-block group">
-      <button onClick={() => setOpen(!open)} className="text-white hover:text-pink-100">
+      <button onClick={() => setOpen(!open)} className="cursor-pointer text-white hover:text-pink-100">
         Menu
       </button>
 
