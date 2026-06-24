@@ -1,32 +1,93 @@
-import Navbar from "../.././components/Navbar";
-import Footer from "../.././components/Footer"
+"use client";
 
-export default function Home() {
-    return (
-    <main>
-        <Navbar />
-        <div className="w-full bg-white shadow-lg rounded-xl p-8 text-center">
-        
-        <h1 className="text-3xl font-bold mb-4">
-          À propos de Sushi House 🍣
+import { useState } from "react";
+import Link from "next/link";
+import Navbar from "../../components/Navbar"
+import Footer from "../../components/Footer"
+
+
+
+export default function AccountPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    console.log("Email:", email);
+    console.log("Password:", password);
+
+    // ici tu brancheras ton API plus tard
+  };
+
+  return (
+    <>
+    <Navbar />
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="w-full max-w-md bg-white p-6 rounded shadow">
+
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Connexion
         </h1>
 
-        <p className="text-gray-600 mb-4">
-          Bienvenue chez Sushi House, un restaurant passionné par la cuisine japonaise authentique.
-          Nous préparons chaque plat avec des ingrédients frais et de qualité.
-        </p>
+        <form onSubmit={handleSubmit} className="space-y-4">
 
-        <p className="text-gray-600 mb-4">
-          Notre mission est de vous offrir une expérience culinaire simple, rapide et délicieuse,
-          directement inspirée du Japon.
-        </p>
+          {/* Email */}
+          <div>
+            <label className="block text-sm mb-1">Email</label>
+            <input
+              type="email"
+              className="w-full border rounded px-3 py-2"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="ex: test@gmail.com"
+              required
+            />
+          </div>
 
-        <p className="text-gray-600">
-          Merci de votre visite et bon appétit ! 🍱
+          {/* Password */}
+          <div>
+            <label className="block text-sm mb-1">Mot de passe</label>
+            <input
+              type="password"
+              className="w-full border rounded px-3 py-2"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          {/* Forgot password */}
+          <div className="text-right">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Mot de passe oublié ?
+            </Link>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+          >
+            Se connecter
+          </button>
+        </form>
+
+        {/* Optional register */}
+        <p className="text-sm text-center mt-4">
+          Pas de compte ?{" "}
+          <Link href="/register" className="text-blue-600 hover:underline">
+            Créer un compte
+          </Link>
         </p>
 
       </div>
-        <Footer />
-    </main>
-    );
+    </div>
+    <Footer />
+    </>
+  );
 }
