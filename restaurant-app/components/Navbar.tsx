@@ -10,20 +10,15 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const updateCartCount = () => {
-  try {
+  const updateCartCount = () => {
     const saved = localStorage.getItem("cart");
 
-    if (!saved) {
-      setCartCount(0);
-      return;
-    }
+    let cart = [];
 
-    const cart = JSON.parse(saved);
-
-    if (!Array.isArray(cart)) {
-      setCartCount(0);
-      return;
+    try {
+      cart = saved ? JSON.parse(saved) : [];
+    } catch {
+      cart = [];
     }
 
     const count = cart.reduce(
@@ -32,20 +27,19 @@ export default function Navbar() {
     );
 
     setCartCount(count);
-  } catch (e) {
-    setCartCount(0);
-  }
-};
+  };
 
-    updateCartCount();
+  // ⬇️ important : petit delay pour éviter lecture trop tôt
+  updateCartCount();
 
-    // 🔁 écoute les changements de localStorage (même onglet)
-    window.addEventListener("cartUpdated", updateCartCount);
+  window.addEventListener("cartUpdated", () => {
+    setTimeout(updateCartCount, 0);
+  });
 
-    return () => {
-      window.removeEventListener("cartUpdated", updateCartCount);
-    };
-  }, []);
+  return () => {
+    window.removeEventListener("cartUpdated", updateCartCount);
+  };
+}, []);
 
   return (
     

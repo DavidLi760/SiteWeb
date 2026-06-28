@@ -25,7 +25,7 @@ export default function Shop() {
         setCart(JSON.parse(saved));
       }
     }, []);
-    //Supprime le panier a chaque accueil
+    //Supprime le panier a chaque home
     useEffect(() => {
       localStorage.setItem("cart", JSON.stringify(cart));
     }, [cart]);
