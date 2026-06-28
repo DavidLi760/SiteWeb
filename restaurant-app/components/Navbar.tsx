@@ -3,11 +3,50 @@
 import Link from "next/link"
 import Menu from "./Menu"
 import { usePathname } from "next/navigation";
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const updateCartCount = () => {
+  try {
+    const saved = localStorage.getItem("cart");
+
+    if (!saved) {
+      setCartCount(0);
+      return;
+    }
+
+    const cart = JSON.parse(saved);
+
+    if (!Array.isArray(cart)) {
+      setCartCount(0);
+      return;
+    }
+
+    const count = cart.reduce(
+      (total: number, item: any) => total + (item.quantity || 0),
+      0
+    );
+
+    setCartCount(count);
+  } catch (e) {
+    setCartCount(0);
+  }
+};
+
+    updateCartCount();
+
+    // 🔁 écoute les changements de localStorage (même onglet)
+    window.addEventListener("cartUpdated", updateCartCount);
+
+    return () => {
+      window.removeEventListener("cartUpdated", updateCartCount);
+    };
+  }, []);
+
   return (
     
     <div className="flex flex-row justify-between items-center sm:h-[100px] h-[60px] px-4 bg-[#716969]">
@@ -30,13 +69,12 @@ export default function Navbar() {
           <i className="fa-solid fa-user text-2xl"></i>
         </Link>
 
-        <Link href="/cart" className="flex text-white">
-          <p className="relative hidden sm:block">
-            Panier{" "}
-          </p>
+        <Link href="/cart" className="flex text-white relative">
+          <p className="hidden sm:block">Panier</p>
           <i className="fa-solid fa-bag-shopping text-2xl"></i>
+
           <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-            0
+            {cartCount}
           </span>
         </Link>
       </div>

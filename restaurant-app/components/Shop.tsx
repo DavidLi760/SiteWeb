@@ -3,7 +3,7 @@
 import { menu } from "../data/menu"
 import Category from "../components/Category"
 import FoodCard from "../components/FoodCard"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Food = {
   id: number;
@@ -12,8 +12,39 @@ type Food = {
   image: string;
 };
 
+type CartItem = Food & {
+  quantity: number;
+};
+
 export default function Shop() {
     const [selectedFood, setSelectedFood] = useState<Food | null>(null);
+    const [cart, setCart] = useState<CartItem[]>([]);
+    useEffect(() => {
+      const saved = localStorage.getItem("cart");
+      if (saved) {
+        setCart(JSON.parse(saved));
+      }
+    }, []);
+    //Supprime le panier a chaque accueil
+    useEffect(() => {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }, [cart]);
+
+    const addToCart = (food: Food) => {
+      setCart((prev) => {
+        const existing = prev.find((item) => item.id === food.id);
+      
+        if (existing) {
+          return prev.map((item) =>
+            item.id === food.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          );
+        }
+      
+        return [...prev, { ...food, quantity: 1 }];
+      });
+    };
     return (
         <>
             {menu.map((cat) => (
@@ -47,9 +78,16 @@ export default function Shop() {
 
                  <p className="mt-2">{selectedFood.price} €</p>
 
-                 <button className="mt-4 bg-green-600 text-white px-4 py-2 rounded w-full">
-                   Acheter
-                 </button>
+                 <button
+                  className="mt-4 bg-green-600 text-white px-4 py-2 rounded w-full"
+                  onClick={() => {
+                    addToCart(selectedFood);
+                    setSelectedFood(null);
+                    window.dispatchEvent(new Event("cartUpdated"));
+                  }}
+                >
+                  Ajouter au panier
+                </button>
 
                  <button
                    className="mt-2 bg-red-500 text-white px-4 py-2 rounded w-full"
