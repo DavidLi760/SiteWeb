@@ -44,7 +44,7 @@ export const menu = [
     category: "Maki",
     items: [
         {
-            id: 1,
+            id: 7,
             name: "Maki saumon",
             price: 4.5,
             image: "/Maki-saumon.png",
@@ -55,7 +55,7 @@ export const menu = [
     category: "California",
     items: [
       {
-        id:1,
+        id:8,
         name: "California saumon avocat",
         price: 5.5,
         image: "/Cali-saumon.png"
