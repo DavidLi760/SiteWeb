@@ -80,7 +80,7 @@ export default function AccountPage() {
         {/* Optional register */}
         <p className="text-sm text-center mt-4">
           Pas de compte ?{" "}
-          <Link href="/register" className="text-blue-600 hover:underline">
+          <Link href="/signin" className="text-blue-600 hover:underline">
             Créer un compte
           </Link>
         </p>
