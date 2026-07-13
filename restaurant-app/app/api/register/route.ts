@@ -1,16 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
+import prisma from "@/lib/prisma";
+import bcrypt from "bcrypt";
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    // Génère un token unique
     const token = crypto.randomUUID();
 
-    // Ici tu enregistreras l'utilisateur dans ta base de données
-    // avec verified = false et le token
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Cet email existe déjà",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+
+    await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        verificationToken: token,
+      },
+    });
 
     const transporter = nodemailer.createTransport({
       service: "gmail",

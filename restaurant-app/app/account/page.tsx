@@ -11,13 +11,38 @@ export default function AccountPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log("Email:", email);
-    console.log("Password:", password);
-
-    // ici tu brancheras ton API plus tard
+    
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+    
+    
+      const data = await res.json();
+    
+    
+      if (data.success) {
+        alert("Connexion réussie !");
+        // Ici tu pourras rediriger vers ton espace client
+        // router.push("/dashboard")
+      } else {
+        alert(data.message);
+      }
+    
+    
+    } catch (error) {
+      console.error(error);
+      alert("Erreur serveur");
+    }
   };
 
   return (
@@ -80,7 +105,7 @@ export default function AccountPage() {
         {/* Optional register */}
         <p className="text-sm text-center mt-4">
           Pas de compte ?{" "}
-          <Link href="/signin" className="text-blue-600 hover:underline">
+          <Link href="/signup" className="text-blue-600 hover:underline">
             Créer un compte
           </Link>
         </p>
