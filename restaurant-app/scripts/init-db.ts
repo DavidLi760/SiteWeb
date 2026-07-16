@@ -10,23 +10,39 @@ import pool from "../lib/db";
 
 async function initDatabase() {
   try {
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         phone VARCHAR(30) NOT NULL,
         password_hash TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+        email_verified BOOLEAN DEFAULT FALSE,
+        verification_token TEXT UNIQUE,
+
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
+
     console.log("Table users créée ou déjà existante.");
 
+
   } catch (error) {
-    console.error(error);
+
+    console.error(
+      "Erreur création database:",
+      error
+    );
+
   } finally {
+
     await pool.end();
+
   }
-}
+}+
+
 
 initDatabase();
