@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import pool from "@/lib/db";
+import { transporter } from "@/lib/mail";
 
 
 export async function POST(req: Request) {
@@ -98,27 +99,20 @@ export async function POST(req: Request) {
 
     // URL de confirmation
     const verificationUrl =
-      `${process.env.NEXT_PUBLIC_URL}/verify-email?token=${verificationToken}`;
+      `${process.env.NEXT_PUBLIC_URL}/api/verify?token=${verificationToken}`;
 
-
-    /*
-      Ici on ajoutera l'envoi du mail :
-
-      Exemple :
-
-      await transporter.sendMail({
-        from: "no-reply@tonsite.com",
-        to: email,
-        subject: "Confirmation de votre compte",
-        html: `
-          <h1>Bienvenue</h1>
-          <p>Cliquez sur le lien pour confirmer votre email :</p>
-          <a href="${verificationUrl}">
-            Confirmer mon email
-          </a>
-        `
-      });
-    */
+await transporter.sendMail({
+  from: "no-reply@tonsite.com",
+  to: email,
+  subject: "Confirmation de votre compte",
+  html: `
+    <h1>Bienvenue</h1>
+    <p>Cliquez ici pour confirmer votre email :</p>
+    <a href="${verificationUrl}">
+      Confirmer mon email
+    </a>
+  `,
+});
 
 
     console.log(
