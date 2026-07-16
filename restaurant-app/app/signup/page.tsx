@@ -7,6 +7,7 @@ import Footer from "../../components/Footer";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -26,6 +27,7 @@ export default function SignupPage() {
       },
       body: JSON.stringify({
         email,
+        phone,
         password,
       }),
     });
@@ -68,6 +70,21 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ex: test@gmail.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">
+                Numéro de téléphone
+              </label>
+              
+              <input
+                type="tel"
+                className="w-full border rounded px-3 py-2"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="ex: +33 6 12 34 56 78"
                 required
               />
             </div>
