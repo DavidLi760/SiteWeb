@@ -7,6 +7,8 @@ import Footer from "../../components/Footer";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,6 +29,8 @@ export default function SignupPage() {
       },
       body: JSON.stringify({
         email,
+        firstname,
+        lastname,
         phone,
         password,
       }),
@@ -70,6 +74,37 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ex: test@gmail.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">
+                Prénom
+              </label>
+
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                value={firstname}
+                onChange={(e) => setFirstname(e.target.value)}
+                placeholder="ex: Jean"
+                required
+              />
+            </div>
+
+
+            <div>
+              <label className="block text-sm mb-1">
+                Nom
+              </label>
+
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                value={lastname}
+                onChange={(e) => setLastname(e.target.value)}
+                placeholder="ex: Dupont"
                 required
               />
             </div>

@@ -11,12 +11,14 @@ export async function POST(req: Request) {
 
     const {
       email,
+      firstname,
+      lastname,
       phone,
       password,
     } = body;
 
 
-    if (!email || !phone || !password) {
+    if (!email || !firstname || !lastname || !phone || !password) {
       return NextResponse.json(
         {
           success: false,
@@ -72,6 +74,8 @@ export async function POST(req: Request) {
       INSERT INTO users
       (
         email,
+        firstname,
+        lastname,
         phone,
         password_hash,
         email_verified,
@@ -83,12 +87,16 @@ export async function POST(req: Request) {
         $2,
         $3,
         $4,
-        $5
+        $5,
+        $6,
+        $7
       )
       RETURNING id, email, phone
       `,
       [
         email,
+        firstname,
+        lastname,
         phone,
         passwordHash,
         false,
