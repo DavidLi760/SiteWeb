@@ -30,7 +30,6 @@ export default function CartPage() {
 
   return (
     <main className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar />
 
       <section className="flex-1 max-w-5xl mx-auto w-full p-6">
         <h1 className="text-4xl font-bold mb-8">🛒 Mon panier</h1>
@@ -107,7 +106,6 @@ export default function CartPage() {
         </div>
       </section>
 
-      <Footer />
     </main>
   );
 }

@@ -4,7 +4,6 @@ import Footer from "../.././components/Footer"
 export default function Home() {
     return (
     <main>
-        <Navbar />
         <div className="w-full bg-white shadow-lg rounded-xl p-8 text-center">
         
         <h1 className="text-3xl font-bold mb-4">
@@ -26,7 +25,6 @@ export default function Home() {
         </p>
 
       </div>
-        <Footer />
     </main>
     );
 }

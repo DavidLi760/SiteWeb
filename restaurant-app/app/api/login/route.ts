@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     // Chercher l'utilisateur
     const result = await pool.query(
       `
-      SELECT id, email, password_hash, email_verified
+      SELECT id, email, firstname, password_hash, email_verified
       FROM users
       WHERE email = $1
       `,
@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     }
 
     const user = result.rows[0];
-
     // Vérification email
     if (!user.email_verified) {
       return NextResponse.json(
@@ -70,6 +69,7 @@ export async function POST(req: NextRequest) {
     const token = jwt.sign(
       {
         id: user.id,
+        firstname: user.firstname,
         email: user.email,
       },
       process.env.JWT_SECRET!,
@@ -84,6 +84,7 @@ export async function POST(req: NextRequest) {
       message: "Connexion réussie",
       user: {
         id: user.id,
+        firstname: user.firstname,
         email: user.email,
       },
     });
