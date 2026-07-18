@@ -1,34 +1,26 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-
-    const { email, password } = body;
+    const { email, password } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
         {
           success: false,
-          message: "Email et mot de passe obligatoires."
+          message: "Email et mot de passe requis",
         },
-        {
-          status: 400
-        }
+        { status: 400 }
       );
     }
 
     // Chercher l'utilisateur
     const result = await pool.query(
       `
-      SELECT 
-        id,
-        email,
-        phone,
-        password_hash,
-        email_verified
+      SELECT id, email, password_hash, email_verified
       FROM users
       WHERE email = $1
       `,
@@ -39,30 +31,26 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Email ou mot de passe incorrect."
+          message: "Email ou mot de passe incorrect",
         },
-        {
-          status: 401
-        }
+        { status: 401 }
       );
     }
 
     const user = result.rows[0];
 
-    // Vérifier email
+    // Vérification email
     if (!user.email_verified) {
       return NextResponse.json(
         {
           success: false,
-          message: "Veuillez confirmer votre email avant de vous connecter."
+          message: "Veuillez vérifier votre email avant de vous connecter",
         },
-        {
-          status: 403
-        }
+        { status: 403 }
       );
     }
 
-    // Vérifier mot de passe
+    // Vérification mot de passe
     const passwordMatch = await bcrypt.compare(
       password,
       user.password_hash
@@ -72,28 +60,44 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Email ou mot de passe incorrect."
+          message: "Email ou mot de passe incorrect",
         },
-        {
-          status: 401
-        }
+        { status: 401 }
       );
     }
 
-    return NextResponse.json(
+    // Création du JWT
+    const token = jwt.sign(
       {
-        success: true,
-        message: "Connexion réussie.",
-        user: {
-          id: user.id,
-          email: user.email,
-          phone: user.phone
-        }
+        id: user.id,
+        email: user.email,
       },
+      process.env.JWT_SECRET!,
       {
-        status: 200
+        expiresIn: "7d",
       }
     );
+
+    // Création de la réponse
+    const response = NextResponse.json({
+      success: true,
+      message: "Connexion réussie",
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    });
+
+    // Cookie sécurisé
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+
+    return response;
 
   } catch (error) {
     console.error("LOGIN ERROR:", error);
@@ -101,11 +105,9 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Erreur serveur."
+        message: "Erreur serveur",
       },
-      {
-        status: 500
-      }
+      { status: 500 }
     );
   }
 }

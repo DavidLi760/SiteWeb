@@ -4,12 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
-
+import { useRouter } from "next/navigation";
 
 
 export default function AccountPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,8 +33,7 @@ export default function AccountPage() {
     
       if (data.success) {
         alert("Connexion réussie !");
-        // Ici tu pourras rediriger vers ton espace client
-        // router.push("/dashboard")
+        router.push("/")
       } else {
         alert(data.message);
       }
