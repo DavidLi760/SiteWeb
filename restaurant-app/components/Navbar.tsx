@@ -40,29 +40,29 @@ export default function Navbar({ user }: { user: any }) {
   }, []);
 
   return (
-    <div className="flex flex-row justify-between items-center sm:h-[100px] h-[60px] px-4 bg-gradient-to-b from-[#4A4A4A] to-[#6A6A6A]">
+    <div className="flex flex-row justify-between items-center sm:h-[100px] h-[60px] px-4 bg-gradient-to-b from-[#4A4A4A] to-[#6A6A6A] sticky top-0 z-50">
       
       <Link href="/" className="flex items-center h-full">
         <img src="/SushiHouse.png" className="h-full" />
       </Link>
 
-      <div className="flex gap-12">
-        <Link className="hidden sm:flex text-white" href="/">
+      <div className="flex gap-[clamp(0.5rem,2vw,3rem)] flex-shrink-0">
+        <Link href="/" className="hidden sm:flex text-white">
           Accueil
         </Link>
 
         {pathname === "/" && <Menu />}
 
-        <Link className="hidden sm:flex text-white" href="/about">
+        <Link href="/about" className="hidden sm:flex text-white flex-shrink-0">
           A propos
         </Link>
       </div>
 
-      <div className="flex gap-4 sm:gap-12 relative text-white">
+      <div className="flex gap-[clamp(0.5rem,2vw,3rem)] relative text-white flex-shrink-0">
 
         <Link 
           href="/account" 
-          className="flex border-2 border-white/30 rounded-full px-4 py-2"
+          className="flex border-2 border-white/30 rounded-full px-4 py-2 flex-shrink-0"
         >
           <p className="hidden sm:block">
             {user ? user.firstname : "Compte"}

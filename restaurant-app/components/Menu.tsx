@@ -12,12 +12,12 @@ export default function Menu() {
         Menu
       </button>
 
-      {open && (<div className="absolute left-0 top-full w-48 rounded border bg-white shadow-lg">
+      {open && (<div className="absolute left-1/2 top-full -translate-x-1/2 w-48 rounded border bg-white shadow-lg divide-y divide-gray-200">
         {menu.map((category) => (
           <a
             key={category.category}
             href={`#${category.category}`}
-            className="block px-4 py-2 hover:bg-gray-100"
+            className="block px-4 py-2 hover:bg-gray-100 text-center"
             onClick={() => setOpen(false)}
           >
             {category.category}
