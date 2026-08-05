@@ -47,13 +47,13 @@ export default function Navbar({ user }: { user: any }) {
       </Link>
 
       <div className="flex gap-[clamp(0.5rem,2vw,3rem)] flex-shrink-0">
-        <Link href="/" className="hidden font-bold sm:flex text-white">
+        <Link href="/" className="hidden hover:text-yellow-100 font-bold sm:flex text-white">
           Accueil
         </Link>
 
         {pathname === "/" && <Menu />}
 
-        <Link href="/about" className="hidden font-bold sm:flex text-white flex-shrink-0">
+        <Link href="/about" className="hidden hover:text-yellow-100 font-bold sm:flex text-white flex-shrink-0">
           A propos
         </Link>
       </div>
@@ -62,7 +62,7 @@ export default function Navbar({ user }: { user: any }) {
 
         <Link 
           href="/account" 
-          className="flex border-2 border-white/30 rounded-full px-4 py-2 flex-shrink-0"
+          className="flex hover:text-yellow-100 hover:border-[#FDE68A]/50 border-2 border-white/30 rounded-full px-4 py-2 flex-shrink-0"
         >
           <p className="hidden sm:block">
             {user ? user.firstname : "Compte"}
@@ -73,7 +73,7 @@ export default function Navbar({ user }: { user: any }) {
 
         <Link 
           href="/cart" 
-          className="flex text-white relative border-2 border-white/30 rounded-full px-4 py-2"
+          className="flex hover:text-yellow-100 hover:border-[#FDE68A]/50 text-white relative border-2 border-white/30 rounded-full px-4 py-2"
         >
           <p className="hidden sm:block">
             Panier
