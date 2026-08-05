@@ -47,13 +47,13 @@ export default function Navbar({ user }: { user: any }) {
       </Link>
 
       <div className="flex gap-[clamp(0.5rem,2vw,3rem)] flex-shrink-0">
-        <Link href="/" className="hidden sm:flex text-white">
+        <Link href="/" className="hidden font-bold sm:flex text-white">
           Accueil
         </Link>
 
         {pathname === "/" && <Menu />}
 
-        <Link href="/about" className="hidden sm:flex text-white flex-shrink-0">
+        <Link href="/about" className="hidden font-bold sm:flex text-white flex-shrink-0">
           A propos
         </Link>
       </div>
