@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import { useEffect, useRef, useState } from "react";
 
 type CartItem = {
   id: number;
@@ -15,6 +13,10 @@ type CartItem = {
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
 
+  const [sending, setSending] = useState(false);
+  const [message, setMessage] = useState("");
+  const sendingRef = useRef(false);
+
   useEffect(() => {
     const saved = localStorage.getItem("cart");
 
@@ -22,6 +24,48 @@ export default function CartPage() {
       setCart(JSON.parse(saved));
     }
   }, []);
+
+  const saveCart = (updatedCart: CartItem[]) => {
+  setCart(updatedCart);
+  localStorage.setItem("cart", JSON.stringify(updatedCart));
+  window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  const changeQuantity = (id: number, change: number) => {
+    saveCart(
+      cart.map((item) =>
+        item.id === id
+          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          : item
+      )
+    );
+  };
+
+const removeItem = (id: number) => {
+  saveCart(cart.filter((item) => item.id !== id));
+};
+
+  const sendOrder = async () => {
+    if (sendingRef.current || cart.length === 0) return;
+    sendingRef.current = true;
+    setSending(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: cart.map(({ id, quantity }) => ({ id, quantity })) }),
+      });
+      const data = await response.json();
+      setMessage(data.message);
+      if (response.ok) saveCart([]);
+    } catch {
+      setMessage("Envoi non confirmé. Contactez le restaurant avant de réessayer pour éviter un doublon.");
+    } finally {
+      sendingRef.current = false;
+      setSending(false);
+    }
+  };
 
   const total = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -61,9 +105,39 @@ export default function CartPage() {
                       {item.name}
                     </h3>
 
-                    <p className="text-gray-500">
-                      Quantité : {item.quantity}
-                    </p>
+                    <div className="flex items-center gap-3 mt-2">
+  <button
+    type="button"
+    onClick={() => changeQuantity(item.id, -1)}
+    disabled={sending || item.quantity <= 1}
+    aria-label={`Diminuer la quantité de ${item.name}`}
+    className="border rounded px-3 py-1 disabled:opacity-40"
+  >
+    −
+  </button>
+
+  <span>{item.quantity}</span>
+
+  <button
+    type="button"
+    disabled={sending}
+    onClick={() => changeQuantity(item.id, 1)}
+    aria-label={`Augmenter la quantité de ${item.name}`}
+    className="border rounded px-3 py-1"
+  >
+    +
+  </button>
+</div>
+
+<button
+  type="button"
+  disabled={sending}
+  onClick={() => removeItem(item.id)}
+  aria-label={`Supprimer ${item.name} du panier`}
+  className="text-red-600 hover:underline text-sm mt-2"
+>
+  Supprimer
+</button>
                   </div>
 
                   <div className="text-right">
@@ -99,9 +173,11 @@ export default function CartPage() {
               <span>{total} €</span>
             </div>
 
-            <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
-              Passer au paiement
+            <p className="text-sm text-gray-600 mb-3">Connectez-vous pour envoyer la commande au restaurant et recevoir une copie par email. Aucun paiement ne sera effectué.</p>
+            <button onClick={sendOrder} disabled={sending || cart.length === 0} className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition disabled:opacity-50">
+              {sending ? "Envoi en cours…" : "Envoyer la commande"}
             </button>
+            <p role="status" className="mt-3 text-sm">{message}</p>
           </div>
         </div>
       </section>

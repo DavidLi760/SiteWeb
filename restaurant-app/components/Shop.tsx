@@ -29,8 +29,9 @@ export default function Shop() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  window.dispatchEvent(new Event("cartUpdated"));
+}, [cart]);
 
   const addToCart = (food: Food, quantity: number) => {
     setCart((prev) => {
@@ -115,7 +116,6 @@ export default function Shop() {
                   addToCart(selectedFood, quantity);
                   setSelectedFood(null);
                   setQuantity(1);
-                  window.dispatchEvent(new Event("cartUpdated"));
                 }}
               >
                 Ajouter

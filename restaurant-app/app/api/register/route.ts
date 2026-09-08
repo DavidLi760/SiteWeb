@@ -110,7 +110,7 @@ export async function POST(req: Request) {
       `${process.env.NEXT_PUBLIC_URL}/api/verify?token=${verificationToken}`;
 
 await transporter.sendMail({
-  from: "no-reply@tonsite.com",
+  from: "from: process.env.SMTP_USER,",
   to: email,
   subject: "Confirmation de votre compte",
   html: `
