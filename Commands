@@ -1,0 +1,9 @@
+Install node.js 24 LTS : curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+Then open terminal :  nvm install 24; nvm use 24
+And to install all dependencies lacking :  npm ci
+
+Install postgreSQL :  sudo apt update; sudo apt install postgresql postgresql-contrib
+
+To test:
+npm run db:init
+npm run dev
