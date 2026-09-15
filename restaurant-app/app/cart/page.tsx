@@ -1,12 +1,17 @@
 "use client";
 
+import { parseDeliveryAddress, type DeliveryAddress } from "@/lib/delivery-address";
+import OrderTypeSelector from "@/components/OrderTypeSelector";
+import { useOrderType } from "@/lib/use-order-type";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { useCart, saveCart } from "@/lib/use-cart";
 
 export default function CartPage() {
   const cart = useCart();
+  const orderType = useOrderType();
 
+  const [address, setAddress] = useState<DeliveryAddress>({ street: "", postalCode: "", city: "", details: "" });
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
   const sendingRef = useRef(false);
@@ -27,6 +32,11 @@ const removeItem = (id: number) => {
 
   const sendOrder = async () => {
     if (sendingRef.current || cart.length === 0) return;
+    const deliveryAddress = orderType === "delivery" ? parseDeliveryAddress(address) : undefined;
+    if (orderType === "delivery" && !deliveryAddress) {
+      setMessage("Veuillez renseigner une adresse de livraison complète et valide.");
+      return;
+    }
     sendingRef.current = true;
     setSending(true);
     setMessage("");
@@ -34,7 +44,7 @@ const removeItem = (id: number) => {
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: cart.map(({ id, quantity }) => ({ id, quantity })) }),
+        body: JSON.stringify({ orderType, deliveryAddress, items: cart.map(({ id, quantity }) => ({ id, quantity })) }),
       });
       const data = await response.json();
       setMessage(data.message);
@@ -131,7 +141,7 @@ const removeItem = (id: number) => {
           </div>
 
           {/* RESUME */}
-          <div className="bg-white rounded-xl shadow-lg p-6 h-fit">
+          <form onSubmit={(event) => { event.preventDefault(); void sendOrder(); }} className="bg-white rounded-xl shadow-lg p-6 h-fit">
             <h2 className="text-2xl font-semibold mb-6">
               Résumé
             </h2>
@@ -141,10 +151,28 @@ const removeItem = (id: number) => {
               <span>{total} €</span>
             </div>
 
-            <div className="flex justify-between mb-3">
-              <span>Livraison</span>
-              <span>Gratuite</span>
-            </div>
+            <OrderTypeSelector disabled={sending} />
+            {orderType === "delivery" && (
+              <fieldset disabled={sending} className="my-4 space-y-3">
+                <legend className="mb-2 font-semibold">Adresse de livraison</legend>
+                {([
+                  { key: "street", label: "Numéro et rue", autocomplete: "address-line1", max: 200 },
+                  { key: "postalCode", label: "Code postal", autocomplete: "postal-code", max: 20 },
+                  { key: "city", label: "Ville", autocomplete: "address-level2", max: 100 },
+                  { key: "details", label: "Complément (facultatif)", autocomplete: "address-line2", max: 300 },
+                ] as const).map(({ key, label, autocomplete, max }) => (
+                  <div key={key}>
+                    <label htmlFor={`delivery-${key}`} className="block text-sm text-gray-700">{label}</label>
+                    <input id={`delivery-${key}`} name={key} autoComplete={autocomplete}
+                      required={key !== "details"} maxLength={max} value={address[key]}
+                      onChange={(event) => setAddress((previous) => ({ ...previous, [key]: event.target.value }))}
+                      className="mt-1 min-h-11 w-full min-w-0 rounded-lg border border-gray-300 px-3 focus:outline-2 focus:outline-lime-600"
+                    />
+                  </div>
+                ))}
+                <p className="text-xs leading-5 text-gray-600">Votre commande sera envoyée avec cette adresse de livraison.</p>
+              </fieldset>
+            )}
 
             <hr className="my-4" />
 
@@ -154,11 +182,11 @@ const removeItem = (id: number) => {
             </div>
 
             <p className="text-sm text-gray-600 mb-3">Connectez-vous pour envoyer la commande au restaurant et recevoir une copie par email. Aucun paiement ne sera effectué.</p>
-            <button onClick={sendOrder} disabled={sending || cart.length === 0} className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition disabled:opacity-50">
+            <button type="submit" disabled={sending || cart.length === 0} className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition disabled:opacity-50">
               {sending ? "Envoi en cours…" : "Envoyer la commande"}
             </button>
             <p role="status" className="mt-3 text-sm">{message}</p>
-          </div>
+          </form>
         </div>
       </section>
 

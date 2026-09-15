@@ -39,6 +39,20 @@ async function initDatabase() {
         ON users (reset_token_hash) WHERE reset_token_hash IS NOT NULL;
     `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id UUID PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id),
+        order_type TEXT NOT NULL CHECK (order_type IN ('takeaway', 'delivery')),
+        items JSONB NOT NULL,
+        total_cents INTEGER NOT NULL CHECK (total_cents >= 0),
+        delivery_address JSONB,
+        email_status TEXT NOT NULL DEFAULT 'pending' CHECK (email_status IN ('pending', 'sent', 'incomplete')),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS orders_user_created_idx ON orders (user_id, created_at DESC);
+    `);
+
     console.log("Table users créée ou déjà existante.");
 
 
