@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const { email, password } = (await req.json().catch(() => null)) ?? {};
 
-    if (!email || !password) {
+    if (typeof email !== "string" || typeof password !== "string" || !email.trim() || !password || email.length > 255 || Buffer.byteLength(password, "utf8") > 72) {
       return NextResponse.json(
         {
           success: false,
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     // Chercher l'utilisateur
     const result = await pool.query(
       `
-      SELECT id, email, firstname, password_hash, email_verified
+      SELECT id, email, firstname, password_hash, email_verified, COALESCE((to_jsonb(users)->>'password_version')::integer, 0) AS password_version
       FROM users
       WHERE email = $1
       `,
@@ -38,17 +38,6 @@ export async function POST(req: NextRequest) {
     }
 
     const user = result.rows[0];
-    // Vérification email
-    if (!user.email_verified) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Veuillez vérifier votre email avant de vous connecter",
-        },
-        { status: 403 }
-      );
-    }
-
     // Vérification mot de passe
     const passwordMatch = await bcrypt.compare(
       password,
@@ -65,9 +54,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Vérification email
+    if (!user.email_verified) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Veuillez vérifier votre email avant de vous connecter",
+        },
+        { status: 403 }
+      );
+    }
+
     // Création du JWT
     const token = jwt.sign(
       {
+        passwordVersion: user.password_version,
         id: user.id,
         firstname: user.firstname,
         email: user.email,

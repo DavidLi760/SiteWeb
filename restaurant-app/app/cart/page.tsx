@@ -1,41 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-type CartItem = {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-};
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { useCart, saveCart } from "@/lib/use-cart";
 
 export default function CartPage() {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const cart = useCart();
 
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
   const sendingRef = useRef(false);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("cart");
-
-    if (saved) {
-      setCart(JSON.parse(saved));
-    }
-  }, []);
-
-  const saveCart = (updatedCart: CartItem[]) => {
-  setCart(updatedCart);
-  localStorage.setItem("cart", JSON.stringify(updatedCart));
-  window.dispatchEvent(new Event("cartUpdated"));
-  };
-
   const changeQuantity = (id: number, change: number) => {
     saveCart(
       cart.map((item) =>
         item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          ? { ...item, quantity: Math.min(99, Math.max(1, item.quantity + change)) }
           : item
       )
     );
@@ -95,7 +75,7 @@ const removeItem = (id: number) => {
                   key={item.id}
                   className="flex items-center gap-4 border-b pb-4 mb-4"
                 >
-                  <img
+                  <Image width={96} height={96} alt={item.name}
                     src={item.image}
                     className="w-24 h-24 rounded-lg object-cover"
                   />
@@ -120,7 +100,7 @@ const removeItem = (id: number) => {
 
   <button
     type="button"
-    disabled={sending}
+    disabled={sending || item.quantity >= 99}
     onClick={() => changeQuantity(item.id, 1)}
     aria-label={`Augmenter la quantité de ${item.name}`}
     className="border rounded px-3 py-1"

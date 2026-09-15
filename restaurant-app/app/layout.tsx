@@ -26,8 +26,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  auth,
 }: Readonly<{
   children: React.ReactNode;
+  auth: React.ReactNode;
 }>) {
 
   const user = await getSession();
@@ -41,6 +43,7 @@ export default async function RootLayout({
         <Navbar user={user} />
         {children}
         <Footer />
+        {auth}
       </body>
     </html>
   );

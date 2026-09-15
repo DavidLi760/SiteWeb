@@ -1,31 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
-  try {
-    const token = req.cookies.get("token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { loggedIn: false },
-        { status: 401 }
-      );
-    }
-
-    const user = jwt.verify(
-      token,
-      process.env.JWT_SECRET!
-    );
-
-    return NextResponse.json({
-      loggedIn: true,
-      user,
-    });
-
-  } catch (error) {
-    return NextResponse.json(
-      { loggedIn: false },
-      { status: 401 }
-    );
-  }
+export async function GET() {
+  const user = await getSession();
+  return NextResponse.json(user ? { loggedIn: true, user } : { loggedIn: false }, {
+    status: user ? 200 : 401,
+    headers: { "Cache-Control": "no-store" },
+  });
 }

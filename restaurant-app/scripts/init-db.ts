@@ -29,6 +29,16 @@ async function initDatabase() {
     `);
 
 
+    await pool.query(`
+      ALTER TABLE users
+        ADD COLUMN IF NOT EXISTS reset_token_hash TEXT,
+        ADD COLUMN IF NOT EXISTS reset_token_expires_at TIMESTAMPTZ,
+        ADD COLUMN IF NOT EXISTS reset_requested_at TIMESTAMPTZ,
+        ADD COLUMN IF NOT EXISTS password_version INTEGER NOT NULL DEFAULT 0;
+      CREATE UNIQUE INDEX IF NOT EXISTS users_reset_token_hash_idx
+        ON users (reset_token_hash) WHERE reset_token_hash IS NOT NULL;
+    `);
+
     console.log("Table users créée ou déjà existante.");
 
 
@@ -39,12 +49,13 @@ async function initDatabase() {
       error
     );
 
+    process.exitCode = 1;
   } finally {
 
     await pool.end();
 
   }
-}+
+}
 
 
 initDatabase();

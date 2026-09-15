@@ -7,7 +7,8 @@ import { transporter } from "@/lib/mail";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") return NextResponse.json({ success: false, message: "Données invalides." }, { status: 400 });
 
     const {
       email,
@@ -18,11 +19,14 @@ export async function POST(req: Request) {
     } = body;
 
 
-    if (!email || !firstname || !lastname || !phone || !password) {
+    if (![email, firstname, lastname, phone, password].every((value) => typeof value === "string" && value.trim().length > 0) ||
+        email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+        firstname.length > 50 || lastname.length > 50 || phone.length > 30 ||
+        password.length < 8 || Buffer.byteLength(password, "utf8") > 72) {
       return NextResponse.json(
         {
           success: false,
-          message: "Tous les champs sont obligatoires."
+          message: "Champs invalides. Le mot de passe doit contenir au moins 8 caractères et au maximum 72 octets."
         },
         {
           status: 400
@@ -30,6 +34,12 @@ export async function POST(req: Request) {
       );
     }
 
+
+    const baseUrl = process.env.NEXT_PUBLIC_URL;
+    if (!baseUrl || !process.env.SMTP_USER) {
+      return NextResponse.json({ success: false, message: "Inscription indisponible : email non configuré." }, { status: 503 });
+    }
+    const verificationBase = new URL("/api/verify", baseUrl);
 
     // Vérifier si l'utilisateur existe déjà
 
@@ -107,10 +117,10 @@ export async function POST(req: Request) {
 
     // URL de confirmation
     const verificationUrl =
-      `${process.env.NEXT_PUBLIC_URL}/api/verify?token=${verificationToken}`;
+      `${verificationBase.href}?token=${verificationToken}`;
 
 await transporter.sendMail({
-  from: "from: process.env.SMTP_USER,",
+  from: process.env.SMTP_USER,
   to: email,
   subject: "Confirmation de votre compte",
   html: `
@@ -121,12 +131,6 @@ await transporter.sendMail({
     </a>
   `,
 });
-
-
-    console.log(
-      "Lien de confirmation :",
-      verificationUrl
-    );
 
 
     return NextResponse.json(
@@ -143,10 +147,10 @@ await transporter.sendMail({
 
   } catch (error) {
 
-    console.error(
-      "REGISTER ERROR:",
-      error
-    );
+    if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") {
+      return NextResponse.json({ success: false, message: "Cet email existe déjà." }, { status: 409 });
+    }
+    console.error("REGISTER ERROR:", error);
 
 
     return NextResponse.json(

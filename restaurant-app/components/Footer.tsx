@@ -1,32 +1,91 @@
-import Link from "next/link"
+import Link from "next/link";
+
+const paymentMethods = [
+  { label: "Espèces", icon: "fa-coins" },
+  { label: "Carte bancaire", icon: "fa-credit-card" },
+  { label: "Ticket restaurant", icon: "fa-ticket" },
+];
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white p-10 mt-20">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        <p>© 2026 Sushi House</p>
-        <div className="flex flex-col">
-          <p>SUSHI HOUSE</p>
-          <p>RESTAURANT JAPONAIS</p>
+    <footer className="mt-20 border-t-4 border-lime-500 bg-gray-900 text-gray-300">
+      <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+          <div className="min-w-0">
+            <Link
+              href="/"
+              className="inline-block rounded text-2xl font-bold tracking-wide text-white transition-colors hover:text-lime-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-300"
+            >
+              SUSHI HOUSE<span className="text-lime-400">.</span>
+            </Link>
+            <p className="mt-3 text-xs font-medium uppercase tracking-[0.18em] text-lime-300">
+              Restaurant japonais
+            </p>
+            <p className="mt-5 max-w-xs text-sm leading-7 text-gray-400">
+              Retrouvez vos sushis, makis et california préférés.
+            </p>
+          </div>
+
+          <section aria-labelledby="footer-contact" className="min-w-0">
+            <h2 id="footer-contact" className="text-base font-semibold text-white">
+              Contact & horaires
+            </h2>
+            <a
+              href="tel:+33182457520"
+              className="mt-5 inline-flex items-center gap-3 rounded text-lg font-medium text-white transition-colors hover:text-lime-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-300"
+            >
+              <i aria-hidden="true" className="fa-solid fa-phone text-sm text-lime-400" />
+              01 82 45 75 20
+            </a>
+            <div className="mt-4 flex items-start gap-3 text-sm leading-7">
+              <i aria-hidden="true" className="fa-regular fa-clock mt-2 text-lime-400" />
+              <div>
+                <p className="font-medium text-gray-200">Ouvert 6 jours sur 7</p>
+                <p>10h – 14h30</p>
+                <p>18h – 22h30</p>
+              </div>
+            </div>
+          </section>
+
+          <section aria-labelledby="footer-payment" className="min-w-0">
+            <h2 id="footer-payment" className="text-base font-semibold text-white">
+              Moyens de paiement
+            </h2>
+            <ul className="mt-5 space-y-3">
+              {paymentMethods.map(({ label, icon }) => (
+                <li key={label} className="flex items-center gap-3 text-sm">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-lime-300">
+                    <i aria-hidden="true" className={`fa-solid ${icon}`} />
+                  </span>
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <nav aria-label="Informations légales" className="min-w-0">
+            <h2 className="text-base font-semibold text-white">Informations</h2>
+            <ul className="mt-5 space-y-4 text-sm">
+              {[
+                { href: "/legal", label: "Mentions légales" },
+                { href: "/privacy", label: "Confidentialité (RGPD)" },
+                { href: "/cookies", label: "Cookies" },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="rounded transition-colors hover:text-lime-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-300"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-        <div className="flex gap-8">
-          <div className="flex flex-col">
-            <Link href="/legal">Mentions légales</Link>
-            <Link href="/privacy">Confidentialité (RGPD)</Link>
-            <Link href="/cookies">Cookies</Link>
-          </div>
-          <div className="flex flex-col">
-            <p>Contactez Nous</p>
-            <p>01 82 45 75 20</p>
-            <p>6/7j 10h-14h30</p>
-            <p>et 18h-22h30</p>
-          </div>
-          <div className="hidden sm:flex flex-col">
-            <p>Moyen de Paiement</p>
-            <p>Espece</p>
-            <p>Carte bancaire</p>
-            <p>Ticket restaurant</p>
-          </div>
+
+        <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs leading-6 text-gray-400 sm:text-left">
+          © {new Date().getFullYear()} Sushi House. Tous droits réservés.
         </div>
       </div>
     </footer>
