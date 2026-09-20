@@ -47,11 +47,11 @@ export default function Shop() {
 
       {selectedFood && (
         <div
-          className="fixed inset-0 z-[60] bg-gray-500/30 flex items-center justify-center"
+          className="fixed inset-0 z-[60] bg-gray-500/30 flex items-center justify-center p-4"
           onClick={() => setSelectedFood(null)}
         >
           <div
-            className="bg-white p-6 rounded w-50 sm:w-80"
+            className="bg-white p-6 rounded w-full max-w-80 max-h-[calc(100dvh-2rem)] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button type="button" onClick={() => setSelectedFood(null)} className="float-right" aria-label="Fermer">×</button>
@@ -64,11 +64,14 @@ export default function Shop() {
 
             <p className="mt-2">{selectedFood.price} €</p>
 
-            <div className="mt-4 flex gap-3 text-gray-600">
+            <div className="mt-4 flex flex-col gap-3 text-gray-600 sm:flex-row">
               {/* Sélecteur de quantité */}
-              <div className="flex items-center border rounded border-gray-300">
+              <div className="flex shrink-0 items-center justify-center self-center border rounded border-gray-300">
                 <button
-                  className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+                  type="button"
+                  aria-label={`Diminuer la quantité de ${selectedFood.name}`}
+                  disabled={quantity <= 1}
+                  className="min-h-11 min-w-11 cursor-pointer rounded-l bg-rose-700 px-3 py-2 text-xl font-bold text-white transition-colors enabled:hover:bg-rose-800 focus-visible:relative focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 >
                   −
@@ -77,7 +80,10 @@ export default function Shop() {
                 <span className="px-4 font-semibold">{quantity}</span>
 
                 <button
-                  className="px-3 cursor-pointer py-2 hover:bg-gray-100"
+                  type="button"
+                  aria-label={`Augmenter la quantité de ${selectedFood.name}`}
+                  disabled={quantity >= 99}
+                  className="min-h-11 min-w-11 cursor-pointer rounded-r bg-emerald-700 px-3 py-2 text-xl font-bold text-white transition-colors enabled:hover:bg-emerald-800 focus-visible:relative focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600"
                   onClick={() => setQuantity(Math.min(99, quantity + 1))}
                 >
                   +
@@ -86,7 +92,7 @@ export default function Shop() {
 
               {/* Ajouter au panier */}
               <button
-                className="flex-1 cursor-pointer bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition"
+                className="min-h-11 min-w-0 w-full sm:w-auto sm:flex-1 cursor-pointer bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition"
                 onClick={() => {
                   addToCart(selectedFood, quantity);
                   setSelectedFood(null);
