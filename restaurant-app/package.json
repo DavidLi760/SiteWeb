@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "db:init": "tsx scripts/init-db.ts",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --import tsx --test lib/*.test.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.2.0",

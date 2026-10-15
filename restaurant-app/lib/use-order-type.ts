@@ -2,34 +2,15 @@
 
 import { useSyncExternalStore } from "react";
 import { isOrderType, type OrderType } from "./order-type";
+import { createLocalStore } from "./local-store";
 
-function snapshot(): OrderType {
-  try {
-    const value = localStorage.getItem("orderType");
-    return isOrderType(value) ? value : "takeaway";
-  } catch {
-    return "takeaway";
-  }
-}
-
-function subscribe(listener: () => void) {
-  window.addEventListener("orderTypeUpdated", listener);
-  window.addEventListener("storage", listener);
-  return () => {
-    window.removeEventListener("orderTypeUpdated", listener);
-    window.removeEventListener("storage", listener);
-  };
-}
+const store = createLocalStore("orderType", "orderTypeUpdated", "Impossible de mémoriser ce choix. Autorisez le stockage dans votre navigateur.");
 
 export function setOrderType(value: OrderType) {
-  try {
-    localStorage.setItem("orderType", value);
-    window.dispatchEvent(new Event("orderTypeUpdated"));
-  } catch {
-    alert("Impossible de mémoriser ce choix. Autorisez le stockage dans votre navigateur.");
-  }
+  store.save(value);
 }
 
-export function useOrderType() {
-  return useSyncExternalStore(subscribe, snapshot, () => "takeaway" as OrderType);
+export function useOrderType(): OrderType {
+  const value = useSyncExternalStore(store.subscribe, store.snapshot, () => null);
+  return isOrderType(value) ? value : "takeaway";
 }

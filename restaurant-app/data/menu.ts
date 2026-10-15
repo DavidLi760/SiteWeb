@@ -71,3 +71,7 @@ export const menu = [
     ],
   }
 ];
+
+export type Food = (typeof menu)[number]["items"][number];
+export const products = menu.flatMap((category) => category.items);
+export const productsById = new Map(products.map((food) => [food.id, food]));

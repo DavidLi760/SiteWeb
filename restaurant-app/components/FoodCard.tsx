@@ -1,19 +1,23 @@
 import Image from "next/image";
+import type { Food } from "@/data/menu";
+import { formatMoney, toCents } from "@/lib/money";
 
-type FoodCardProps = {
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-};
+type FoodCardProps = Pick<Food, "name" | "description" | "image" | "price">;
 
 export default function FoodCard({ name, description, price, image }: FoodCardProps) {
   return (
-    <div className="mt-4 p-4 aspect-[3/2] cursor-pointer bg-white shadow-lg hover:shadow-xl rounded w-full">
-        <Image width={600} height={400} alt={name} src={image} className="w-full h-30 sm:h-40 object-contain rounded"/>
-        <p className="font-bold truncate">{name}</p>
-        <p className="mt-1 text-sm text-gray-600 whitespace-normal break-words">{description}</p>
-        <p className="text-gray-600">{price} €</p>
-    </div>
+    <span className="flex h-full w-full flex-col rounded bg-white p-4 shadow-lg transition-shadow group-hover:shadow-xl motion-reduce:transition-none">
+      <Image
+        width={600}
+        height={400}
+        sizes="(min-width: 1280px) 400px, (min-width: 1024px) 33vw, 50vw"
+        alt=""
+        src={image}
+        className="h-30 w-full rounded object-contain sm:h-40"
+      />
+      <span className="mt-2 block break-words font-bold">{name}</span>
+      <span className="mt-1 block break-words text-sm text-gray-600">{description}</span>
+      <span className="mt-auto block pt-2 text-gray-600">{formatMoney(toCents(price))}</span>
+    </span>
   );
 }

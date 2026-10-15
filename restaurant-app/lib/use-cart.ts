@@ -1,34 +1,16 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { parseCart, type CartItem } from "./cart";
+import { createLocalStore } from "./local-store";
 
-function snapshot() {
-  try {
-    return localStorage.getItem("cart");
-  } catch {
-    return null;
-  }
-}
-
-function subscribe(listener: () => void) {
-  window.addEventListener("cartUpdated", listener);
-  window.addEventListener("storage", listener);
-  return () => {
-    window.removeEventListener("cartUpdated", listener);
-    window.removeEventListener("storage", listener);
-  };
-}
+const store = createLocalStore("cart", "cartUpdated", "Impossible d’enregistrer le panier. Autorisez le stockage dans votre navigateur.");
 
 export function saveCart(cart: CartItem[]) {
-  try {
-    localStorage.setItem("cart", JSON.stringify(cart));
-    window.dispatchEvent(new Event("cartUpdated"));
-  } catch {
-    alert("Impossible d’enregistrer le panier. Autorisez le stockage dans votre navigateur.");
-  }
+  store.save(JSON.stringify(cart));
 }
 
 export function useCart() {
-  return parseCart(useSyncExternalStore(subscribe, snapshot, () => null));
+  const saved = useSyncExternalStore(store.subscribe, store.snapshot, () => null);
+  return useMemo(() => parseCart(saved), [saved]);
 }

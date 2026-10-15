@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { transporter } from "@/lib/mail";
 import { createResetToken } from "@/lib/password-reset";
+import { validEmail } from "@/lib/validation";
 
 const message = "Si un compte correspond à cette adresse, un lien vous sera envoyé. Vérifiez aussi vos courriers indésirables. Vous pouvez demander un nouveau lien dans une minute.";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   const email = typeof body?.email === "string" ? body.email.trim() : "";
-  if (email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!validEmail(email)) {
     return NextResponse.json({ message: "Saisissez une adresse email valide." }, { status: 400 });
   }
   if (!process.env.NEXT_PUBLIC_URL || !process.env.SMTP_USER) {

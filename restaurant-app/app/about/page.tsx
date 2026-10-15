@@ -1,3 +1,4 @@
+import { restaurant } from "@/data/restaurant";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -78,23 +79,21 @@ export default function AboutPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lime-700">Gardons le contact</p>
           <h2 id="contact-title" className="mt-3 text-3xl font-bold text-gray-900">Une question avant de venir ?</h2>
           <p className="mt-4 max-w-md leading-7 text-gray-600">Appelez-nous pour en savoir plus sur la carte ou préparer votre visite.</p>
-          <a href="tel:+33182457520" className={`mt-6 inline-flex min-h-12 items-center gap-3 rounded-xl bg-gray-900 px-5 py-3 font-semibold text-white transition-colors hover:bg-gray-800 hover:text-lime-300 ${focusStyle}`}>
+          <a href={restaurant.phoneHref} className={`mt-6 inline-flex min-h-12 items-center gap-3 rounded-xl bg-gray-900 px-5 py-3 font-semibold text-white transition-colors hover:bg-gray-800 hover:text-lime-300 ${focusStyle}`}>
             <i aria-hidden="true" className="fa-solid fa-phone text-lime-300" />
-            01 82 45 75 20
+            {restaurant.phone}
           </a>
         </div>
         <div className="self-center rounded-2xl border border-lime-200 bg-white p-6 sm:p-8">
           <h3 className="text-lg font-semibold text-gray-900">Nos horaires</h3>
-          <p className="mt-2 text-sm text-gray-500">Ouvert 6 jours sur 7</p>
+          <p className="mt-2 text-sm text-gray-500">{restaurant.openingDays}</p>
           <dl className="mt-5 divide-y divide-gray-100 text-sm sm:text-base">
-            <div className="flex flex-wrap justify-between gap-2 py-3">
-              <dt className="text-gray-600">Le midi</dt>
-              <dd className="font-semibold text-gray-900">10h – 14h30</dd>
-            </div>
-            <div className="flex flex-wrap justify-between gap-2 py-3">
-              <dt className="text-gray-600">Le soir</dt>
-              <dd className="font-semibold text-gray-900">18h – 22h30</dd>
-            </div>
+            {restaurant.hours.map(({ label, time }) => (
+              <div key={label} className="flex flex-wrap justify-between gap-2 py-3">
+                <dt className="text-gray-600">{label}</dt>
+                <dd className="font-semibold text-gray-900">{time}</dd>
+              </div>
+            ))}
           </dl>
         </div>
       </section>

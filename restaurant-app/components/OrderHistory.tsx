@@ -1,18 +1,19 @@
 import Link from "next/link";
+import { formatMoney } from "@/lib/money";
 import pool from "@/lib/db";
+import type { OrderItem } from "@/lib/orders";
 import type { DeliveryAddress } from "@/lib/delivery-address";
 import { orderTypeLabels, type OrderType } from "@/lib/order-type";
 
 type Order = {
   id: string;
   order_type: OrderType;
-  items: { id: number; name: string; quantity: number; priceCents: number }[];
+  items: OrderItem[];
   total_cents: number;
   delivery_address: DeliveryAddress | null;
   email_status: "pending" | "sent" | "incomplete";
   created_at: Date;
 };
-const money = (cents: number) => (cents / 100).toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 
 export default async function OrderHistory({ userId, firstname }: { userId: number; firstname: string }) {
   let orders: Order[] = [];
@@ -47,10 +48,10 @@ export default async function OrderHistory({ userId, firstname }: { userId: numb
             <time dateTime={order.created_at.toISOString()} className="mt-2 block text-sm text-gray-500">{order.created_at.toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</time>
             <p className="mt-1 break-all text-xs text-gray-500">Référence : {order.id}</p>
             <ul className="my-4 space-y-2 text-sm">
-              {order.items.map((item) => <li key={item.id} className="flex justify-between gap-3"><span>{item.quantity} × {item.name}</span><span className="shrink-0">{money(item.priceCents * item.quantity)}</span></li>)}
+              {order.items.map((item) => <li key={item.id} className="flex justify-between gap-3"><span>{item.quantity} × {item.name}</span><span className="shrink-0">{formatMoney(item.priceCents * item.quantity)}</span></li>)}
             </ul>
             {order.delivery_address && <p className="mb-4 break-words text-sm text-gray-600">Livraison : {order.delivery_address.street}, {order.delivery_address.postalCode} {order.delivery_address.city}{order.delivery_address.details && ` — ${order.delivery_address.details}`}</p>}
-            <p className="border-t border-gray-100 pt-3 text-right font-bold">Total : {money(order.total_cents)}</p>
+            <p className="border-t border-gray-100 pt-3 text-right font-bold">Total : {formatMoney(order.total_cents)}</p>
             {order.email_status !== "sent" && <p className="mt-3 text-sm text-amber-800">Contactez le restaurant avant de renouveler cette commande pour éviter un doublon.</p>}
           </article>
         ))}

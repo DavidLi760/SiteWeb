@@ -1,11 +1,3 @@
-import path from "path";
-import dotenv from "dotenv";
-
-dotenv.config({
-  path: path.resolve(process.cwd(), ".env.local"),
-});
-
-
 import pool from "../lib/db";
 
 async function initDatabase() {
@@ -27,7 +19,6 @@ async function initDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-
 
     await pool.query(`
       ALTER TABLE users
@@ -53,8 +44,7 @@ async function initDatabase() {
       CREATE INDEX IF NOT EXISTS orders_user_created_idx ON orders (user_id, created_at DESC);
     `);
 
-    console.log("Table users créée ou déjà existante.");
-
+    console.log("Tables users et orders initialisées.");
 
   } catch (error) {
 
@@ -70,6 +60,5 @@ async function initDatabase() {
 
   }
 }
-
 
 initDatabase();

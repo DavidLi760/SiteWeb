@@ -12,7 +12,3 @@ export function hashResetToken(token: string) {
 export function validResetToken(token: unknown): token is string {
   return typeof token === "string" && /^[a-f0-9]{64}$/.test(token);
 }
-
-export function validPassword(password: unknown): password is string {
-  return typeof password === "string" && password.length >= 8 && Buffer.byteLength(password, "utf8") <= 72;
-}

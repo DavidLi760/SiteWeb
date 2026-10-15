@@ -1,3 +1,4 @@
+import { informationLinks } from "@/data/restaurant";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -15,11 +16,7 @@ export default function InformationPage({ title, description, current, children 
         <p className="mt-4 leading-7 text-gray-300">{description}</p>
       </header>
       <nav aria-label="Pages d’information" className="my-6 flex flex-wrap gap-3">
-        {[
-          { href: "/legal", label: "Mentions légales" },
-          { href: "/privacy", label: "Confidentialité" },
-          { href: "/cookies", label: "Cookies" },
-        ].map(({ href, label }) => (
+        {informationLinks.map(({ href, label }) => (
           <Link key={href} href={href} aria-current={current === href ? "page" : undefined}
             className={`inline-flex min-h-11 items-center rounded-xl border px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-700 ${current === href ? "border-lime-300 bg-lime-100 text-lime-900" : "border-gray-300 bg-white text-gray-700 hover:bg-gray-100"}`}>
             {label}

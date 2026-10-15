@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import pool from "@/lib/db";
-import { hashResetToken, validPassword, validResetToken } from "@/lib/password-reset";
+import { hashResetToken, validResetToken } from "@/lib/password-reset";
+import { validPassword } from "@/lib/validation";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);

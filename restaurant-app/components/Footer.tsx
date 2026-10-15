@@ -1,3 +1,4 @@
+import { restaurant, informationLinks } from "@/data/restaurant";
 import Link from "next/link";
 
 const paymentMethods = [
@@ -31,18 +32,19 @@ export default function Footer() {
               Contact & horaires
             </h2>
             <a
-              href="tel:+33182457520"
+              href={restaurant.phoneHref}
               className="mt-5 inline-flex items-center gap-3 rounded text-lg font-medium text-white transition-colors hover:text-lime-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-300"
             >
               <i aria-hidden="true" className="fa-solid fa-phone text-sm text-lime-400" />
-              01 82 45 75 20
+              {restaurant.phone}
             </a>
             <div className="mt-4 flex items-start gap-3 text-sm leading-7">
               <i aria-hidden="true" className="fa-regular fa-clock mt-2 text-lime-400" />
               <div>
-                <p className="font-medium text-gray-200">Ouvert 6 jours sur 7</p>
-                <p>10h – 14h30</p>
-                <p>18h – 22h30</p>
+                <p className="font-medium text-gray-200">{restaurant.openingDays}</p>
+                {restaurant.hours.map(({ label, time }) => (
+                  <p key={label}>{time}</p>
+                ))}
               </div>
             </div>
           </section>
@@ -66,17 +68,13 @@ export default function Footer() {
           <nav aria-label="Informations légales" className="min-w-0">
             <h2 className="text-base font-semibold text-white">Informations</h2>
             <ul className="mt-5 space-y-4 text-sm">
-              {[
-                { href: "/legal", label: "Mentions légales" },
-                { href: "/privacy", label: "Confidentialité (RGPD)" },
-                { href: "/cookies", label: "Cookies" },
-              ].map(({ href, label }) => (
+              {informationLinks.map(({ href, label, footerLabel }) => (
                 <li key={href}>
                   <Link
                     href={href}
                     className="rounded transition-colors hover:text-lime-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-300"
                   >
-                    {label}
+                    {footerLabel ?? label}
                   </Link>
                 </li>
               ))}
@@ -84,9 +82,9 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs leading-6 text-gray-400 sm:text-left">
+        <p className="mt-10 border-t border-white/10 pt-6 text-center text-xs leading-6 text-gray-400 sm:text-left">
           © {new Date().getFullYear()} Sushi House. Tous droits réservés.
-        </div>
+        </p>
       </div>
     </footer>
   );

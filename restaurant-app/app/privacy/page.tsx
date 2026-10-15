@@ -1,3 +1,4 @@
+import { restaurant } from "@/data/restaurant";
 import type { Metadata } from "next";
 import Link from "next/link";
 import InformationPage from "@/components/InformationPage";
@@ -16,7 +17,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Qui contacter ?</h2>
         <p>Le site est exploité sous l’enseigne Sushi House. Les coordonnées légales de l’exploitant sont à compléter dans les <Link href="/legal">mentions légales</Link>, ainsi que le contact dédié aux données personnelles.</p>
-        <p>Vous pouvez joindre le restaurant au <a href="tel:+33182457520">01 82 45 75 20</a> pour être orienté vers la personne chargée de votre demande.</p>
+        <p>Vous pouvez joindre le restaurant au <a href={restaurant.phoneHref}>{restaurant.phone}</a> pour être orienté vers la personne chargée de votre demande.</p>
       </section>
       <section>
         <h2>Quelles données sont utilisées ?</h2>

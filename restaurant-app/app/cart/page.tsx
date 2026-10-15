@@ -4,6 +4,9 @@ import { parseDeliveryAddress, type DeliveryAddress } from "@/lib/delivery-addre
 import OrderTypeSelector from "@/components/OrderTypeSelector";
 import { useOrderType } from "@/lib/use-order-type";
 import Image from "next/image";
+import QuantitySelector from "@/components/QuantitySelector";
+import { setCartQuantity } from "@/lib/cart";
+import { formatMoney, toCents } from "@/lib/money";
 import { useRef, useState } from "react";
 import { useCart, saveCart } from "@/lib/use-cart";
 
@@ -16,19 +19,9 @@ export default function CartPage() {
   const [message, setMessage] = useState("");
   const sendingRef = useRef(false);
 
-  const changeQuantity = (id: number, change: number) => {
-    saveCart(
-      cart.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.min(99, Math.max(1, item.quantity + change)) }
-          : item
-      )
-    );
+  const removeItem = (id: number) => {
+    saveCart(cart.filter((item) => item.id !== id));
   };
-
-const removeItem = (id: number) => {
-  saveCart(cart.filter((item) => item.id !== id));
-};
 
   const sendOrder = async () => {
     if (sendingRef.current || cart.length === 0) return;
@@ -58,97 +51,79 @@ const removeItem = (id: number) => {
   };
 
   const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + toCents(item.price) * item.quantity,
     0
   );
 
   return (
-    <main className="min-h-screen bg-gray-100 flex flex-col">
+    <main className="bg-gray-100">
+      <section aria-labelledby="cart-title" className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
+        <h1 id="cart-title" className="mb-8 text-3xl font-bold sm:text-4xl">🛒 Mon panier</h1>
 
-      <section className="flex-1 max-w-5xl mx-auto w-full p-6">
-        <h1 className="text-4xl font-bold mb-8">🛒 Mon panier</h1>
-
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-6 lg:grid-cols-3">
           {/* LISTE PRODUITS */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold mb-6">
+          <div className="min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6 lg:col-span-2">
+            <h2 className="mb-6 text-2xl font-semibold">
               Articles
             </h2>
 
             {cart.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
+              <div className="py-12 text-center text-gray-500">
                 Votre panier est vide 🍣
               </div>
             ) : (
-              cart.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-4 border-b pb-4 mb-4"
-                >
-                  <Image width={96} height={96} alt={item.name}
-                    src={item.image}
-                    className="w-24 h-24 rounded-lg object-cover"
-                  />
+              <ul>
+                {cart.map((item) => (
+                  <li
+                    key={item.id}
+                    className="mb-4 grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-3 border-b border-gray-200 pb-4 last:mb-0 last:border-b-0 sm:grid-cols-[6rem_minmax(0,1fr)_auto] sm:items-center sm:gap-4"
+                  >
+                    <Image width={96} height={96} alt={item.name}
+                      src={item.image}
+                      className="h-16 w-16 rounded-lg object-contain sm:h-24 sm:w-24"
+                    />
 
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg">
-                      {item.name}
-                    </h3>
+                    <div className="min-w-0">
+                      <h3 className="break-words text-lg font-bold">
+                        {item.name}
+                      </h3>
 
-                    <div className="flex items-center gap-3 mt-2">
-  <button
-    type="button"
-    onClick={() => changeQuantity(item.id, -1)}
-    disabled={sending || item.quantity <= 1}
-    aria-label={`Diminuer la quantité de ${item.name}`}
-    className="border rounded px-3 py-1 disabled:opacity-40"
-  >
-    −
-  </button>
+                      <div className="mt-2 flex">
+                        <QuantitySelector name={item.name} quantity={item.quantity} disabled={sending}
+                          onChange={(quantity) => saveCart(setCartQuantity(cart, item.id, quantity))} />
+                      </div>
 
-  <span>{item.quantity}</span>
+                      <button
+                        type="button"
+                        disabled={sending}
+                        onClick={() => removeItem(item.id)}
+                        aria-label={`Supprimer ${item.name} du panier`}
+                        className="mt-2 min-h-11 rounded text-sm text-red-700 hover:underline focus-visible:outline-2 focus-visible:outline-lime-600 disabled:opacity-50"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
 
-  <button
-    type="button"
-    disabled={sending || item.quantity >= 99}
-    onClick={() => changeQuantity(item.id, 1)}
-    aria-label={`Augmenter la quantité de ${item.name}`}
-    className="border rounded px-3 py-1"
-  >
-    +
-  </button>
-</div>
-
-<button
-  type="button"
-  disabled={sending}
-  onClick={() => removeItem(item.id)}
-  aria-label={`Supprimer ${item.name} du panier`}
-  className="text-red-600 hover:underline text-sm mt-2"
->
-  Supprimer
-</button>
-                  </div>
-
-                  <div className="text-right">
-                    <p className="font-bold text-lg">
-                      {item.price * item.quantity} €
-                    </p>
-                  </div>
-                </div>
-              ))
+                    <div className="col-start-2 whitespace-nowrap sm:col-start-3 sm:row-start-1 sm:text-right">
+                      <p className="break-words text-lg font-bold">
+                        {formatMoney(toCents(item.price) * item.quantity)}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
 
           {/* RESUME */}
-          <form onSubmit={(event) => { event.preventDefault(); void sendOrder(); }} className="bg-white rounded-xl shadow-lg p-6 h-fit">
-            <h2 className="text-2xl font-semibold mb-6">
+          <form onSubmit={(event) => { event.preventDefault(); void sendOrder(); }} aria-labelledby="cart-summary-title" aria-busy={sending} className="h-fit min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">
+            <h2 id="cart-summary-title" className="mb-6 text-2xl font-semibold">
               Résumé
             </h2>
 
-            <div className="flex justify-between mb-3">
+            <div className="mb-3 flex justify-between gap-3">
               <span>Sous-total</span>
-              <span>{total} €</span>
+              <span>{formatMoney(total)}</span>
             </div>
 
             <OrderTypeSelector disabled={sending} />
@@ -176,20 +151,19 @@ const removeItem = (id: number) => {
 
             <hr className="my-4" />
 
-            <div className="flex justify-between text-xl font-bold mb-6">
+            <div className="mb-6 flex justify-between gap-3 text-xl font-bold">
               <span>Total</span>
-              <span>{total} €</span>
+              <span>{formatMoney(total)}</span>
             </div>
 
-            <p className="text-sm text-gray-600 mb-3">Connectez-vous pour envoyer la commande au restaurant et recevoir une copie par email. Aucun paiement ne sera effectué.</p>
-            <button type="submit" disabled={sending || cart.length === 0} className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition disabled:opacity-50">
+            <p className="mb-3 text-sm text-gray-600">Connectez-vous pour envoyer la commande au restaurant et recevoir une copie par email. Aucun paiement ne sera effectué.</p>
+            <button type="submit" disabled={sending || cart.length === 0} className="min-h-12 w-full cursor-pointer rounded-lg bg-black px-4 py-3 text-white transition-colors hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-600 disabled:cursor-not-allowed disabled:opacity-50">
               {sending ? "Envoi en cours…" : "Envoyer la commande"}
             </button>
             <p role="status" className="mt-3 text-sm">{message}</p>
           </form>
         </div>
       </section>
-
     </main>
   );
 }

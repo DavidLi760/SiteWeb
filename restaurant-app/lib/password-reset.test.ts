@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createResetToken, hashResetToken, validResetToken, validPassword } from "./password-reset";
+import { createResetToken, hashResetToken, validResetToken } from "./password-reset";
+import { validPassword } from "./validation";
 
 test("reset tokens are unique and only their digest is stored", () => {
   const first = createResetToken();

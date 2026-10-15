@@ -1,3 +1,4 @@
+import { restaurant } from "@/data/restaurant";
 import type { Metadata } from "next";
 import InformationPage from "@/components/InformationPage";
 
@@ -19,7 +20,7 @@ export default function LegalPage() {
           <div><dt>Raison sociale et forme juridique</dt><dd>À compléter par l’exploitant.</dd></div>
           <div><dt>Adresse du siège social</dt><dd>À compléter par l’exploitant.</dd></div>
           <div><dt>Immatriculation, capital social et numéro de TVA applicable</dt><dd>À compléter selon le statut de l’exploitant.</dd></div>
-          <div><dt>Téléphone</dt><dd><a href="tel:+33182457520">01 82 45 75 20</a></dd></div>
+          <div><dt>Téléphone</dt><dd><a href={restaurant.phoneHref}>{restaurant.phone}</a></dd></div>
           <div><dt>Adresse email de contact</dt><dd>À compléter par l’exploitant.</dd></div>
           <div><dt>Directeur ou directrice de la publication</dt><dd>À compléter par l’exploitant.</dd></div>
         </dl>
@@ -31,7 +32,7 @@ export default function LegalPage() {
       <section>
         <h2>Utilisation du site</h2>
         <p>Le site permet de consulter la carte, de préparer un panier et d’envoyer une commande au restaurant après connexion. Aucun paiement en ligne n’est effectué sur ce site.</p>
-        <p>Pour toute question sur un produit ou une commande, contactez le restaurant au <a href="tel:+33182457520">01 82 45 75 20</a>.</p>
+        <p>Pour toute question sur un produit ou une commande, contactez le restaurant au <a href={restaurant.phoneHref}>{restaurant.phone}</a>.</p>
       </section>
       <section>
         <h2>Informations de référence</h2>
